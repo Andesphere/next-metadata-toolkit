@@ -23,7 +23,7 @@ export const websiteSchema = (input: WebSiteSchemaInput): WithContext<WebSite> =
         urlTemplate: searchUrl,
       },
       'query-input': 'required name=search_term_string',
-    };
+    } as typeof schema.potentialAction;
   }
 
   return schema;

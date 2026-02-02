@@ -4,8 +4,8 @@ import { setSeoDefaults } from './state';
 import { deepMerge, warnDescription } from './utils';
 import type { SeoConfigInput } from './types';
 
-const DEFAULT_OG_TYPE: NonNullable<Metadata['openGraph']>['type'] = 'website';
-const DEFAULT_TWITTER_CARD: NonNullable<Metadata['twitter']>['card'] = 'summary_large_image';
+const DEFAULT_OG_TYPE = 'website' as const;
+const DEFAULT_TWITTER_CARD = 'summary_large_image' as const;
 
 /**
  * Build global Metadata defaults for your root layout.

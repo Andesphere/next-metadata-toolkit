@@ -26,16 +26,14 @@ export const productSchema = (input: ProductSchemaInput): WithContext<Product> =
   }
 
   if (offers) {
-    const offer: Offer = {
+    schema.offers = {
       '@type': 'Offer',
       price: offers.price,
       priceCurrency: offers.priceCurrency,
       ...(offers.availability ? { availability: offers.availability } : {}),
       ...(offers.url ? { url: offers.url } : {}),
       ...(offers.itemCondition ? { itemCondition: offers.itemCondition } : {}),
-    };
-
-    schema.offers = offer;
+    } as Offer;
   }
 
   return schema;
