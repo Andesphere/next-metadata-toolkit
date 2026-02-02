@@ -1,0 +1,53 @@
+{
+  "name": "@andesphere/next-seo",
+  "version": "0.1.0",
+  "description": "Thin wrapper around Next.js App Router Metadata API with typed JSON-LD helpers.",
+  "license": "MIT",
+  "author": "Andesphere",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Andesphere/next-seo.git"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.2.64",
+    "next": "^14.0.0",
+    "schema-dts": "^1.1.2",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "nextjs",
+    "seo",
+    "metadata",
+    "json-ld",
+    "schema.org"
+  ]
+}
