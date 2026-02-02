@@ -1,4 +1,4 @@
-export { createSeoConfig } from './config';
+export { createSeoConfig, createSeoDefaults } from './config';
 export { makePageMetadata } from './metadata';
 export { JsonLd } from './components/JsonLd';
 export {
@@ -13,6 +13,7 @@ export {
 export type {
   JsonLdData,
   SeoConfigInput,
+  SeoDefaults,
   PageMetadataInput,
   OrganizationSchemaInput,
   WebSiteSchemaInput,

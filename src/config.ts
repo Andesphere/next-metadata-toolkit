@@ -1,17 +1,23 @@
 import type { Metadata } from 'next';
 
-import { setSeoDefaults } from './state';
 import { deepMerge, warnDescription } from './utils';
-import type { SeoConfigInput } from './types';
+import type { SeoConfigInput, SeoDefaults } from './types';
 
 const DEFAULT_OG_TYPE = 'website' as const;
 const DEFAULT_TWITTER_CARD = 'summary_large_image' as const;
 
-/**
- * Build global Metadata defaults for your root layout.
- */
-export const createSeoConfig = (input: SeoConfigInput): Metadata => {
-  const metadataBase = input.baseUrl instanceof URL ? input.baseUrl : new URL(input.baseUrl);
+const resolveMetadataBase = (input: SeoConfigInput): URL => {
+  try {
+    return input.baseUrl instanceof URL ? input.baseUrl : new URL(input.baseUrl);
+  } catch (error) {
+    throw new Error(
+      `[next-seo] Invalid baseUrl provided to createSeoConfig(): ${String(input.baseUrl)}`
+    );
+  }
+};
+
+export const createSeoDefaults = (input: SeoConfigInput): SeoDefaults => {
+  const metadataBase = resolveMetadataBase(input);
   const defaultTitle = input.defaultTitle ?? input.siteName;
   const titleTemplate = input.titleTemplate ?? `%s | ${input.siteName}`;
 
@@ -38,37 +44,54 @@ export const createSeoConfig = (input: SeoConfigInput): Metadata => {
   };
 
   const openGraphOverride =
-    (input.openGraph ?? undefined) as Partial<NonNullable<Metadata['openGraph']>> | undefined;
+    input.openGraph === null
+      ? null
+      : (input.openGraph ?? undefined) as Partial<NonNullable<Metadata['openGraph']>> | undefined;
   const twitterOverride =
-    (input.twitter ?? undefined) as Partial<NonNullable<Metadata['twitter']>> | undefined;
+    input.twitter === null
+      ? null
+      : (input.twitter ?? undefined) as Partial<NonNullable<Metadata['twitter']>> | undefined;
 
-  const openGraph = deepMerge(
-    openGraphDefaults as NonNullable<Metadata['openGraph']>,
-    openGraphOverride
-  );
+  const openGraph =
+    openGraphOverride === null
+      ? undefined
+      : deepMerge(
+          openGraphDefaults as NonNullable<Metadata['openGraph']>,
+          openGraphOverride
+        );
 
-  const twitter = deepMerge(
-    twitterDefaults as NonNullable<Metadata['twitter']>,
-    twitterOverride
-  );
+  const twitter =
+    twitterOverride === null
+      ? undefined
+      : deepMerge(
+          twitterDefaults as NonNullable<Metadata['twitter']>,
+          twitterOverride
+        );
 
-  setSeoDefaults({
+  return {
     metadataBase,
     titleTemplate,
     defaultTitle,
     defaultDescription: input.defaultDescription,
     openGraph,
     twitter,
-  });
+  };
+};
+
+/**
+ * Build global Metadata defaults for your root layout.
+ */
+export const createSeoConfig = (input: SeoConfigInput): Metadata => {
+  const defaults = createSeoDefaults(input);
 
   return {
-    metadataBase,
+    metadataBase: defaults.metadataBase,
     title: {
-      default: defaultTitle,
-      template: titleTemplate,
+      default: defaults.defaultTitle,
+      template: defaults.titleTemplate,
     },
-    description: input.defaultDescription,
-    openGraph,
-    twitter,
+    description: defaults.defaultDescription,
+    openGraph: defaults.openGraph,
+    twitter: defaults.twitter,
   };
 };

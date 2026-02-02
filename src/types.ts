@@ -16,6 +16,15 @@ export interface SeoConfigInput {
   twitter?: Metadata['twitter'];
 }
 
+export interface SeoDefaults {
+  metadataBase: URL;
+  titleTemplate: string;
+  defaultTitle: string;
+  defaultDescription?: string;
+  openGraph?: Metadata['openGraph'];
+  twitter?: Metadata['twitter'];
+}
+
 export type PageMetadataInput = Omit<Metadata, 'metadataBase'> & {
   canonical?: string | URL;
   pathname?: string;

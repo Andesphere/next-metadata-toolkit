@@ -35,6 +35,18 @@ export const isPlainObject = (value: unknown): value is Record<string, unknown> 
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 };
 
+const cloneDeep = <T>(value: T): T => {
+  if (Array.isArray(value)) {
+    return value.map((item) => cloneDeep(item)) as T;
+  }
+  if (isPlainObject(value)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, cloneDeep(item)])
+    ) as T;
+  }
+  return value;
+};
+
 export const deepMerge = <T extends Record<string, unknown>>(
   base?: T,
   override?: Partial<T>
@@ -42,7 +54,7 @@ export const deepMerge = <T extends Record<string, unknown>>(
   if (!base && !override) {
     return undefined;
   }
-  const result: Record<string, unknown> = { ...(base ?? {}) };
+  const result: Record<string, unknown> = base ? cloneDeep(base) : {};
   if (!override) {
     return result as T;
   }
@@ -54,7 +66,7 @@ export const deepMerge = <T extends Record<string, unknown>>(
     if (isPlainObject(existing) && isPlainObject(value)) {
       result[key] = deepMerge(existing, value);
     } else {
-      result[key] = value;
+      result[key] = cloneDeep(value);
     }
   }
   return result as T;
@@ -81,7 +93,7 @@ export const normalizeCanonical = (
 };
 
 export const resolveTitle = (title?: Metadata['title']): string | undefined => {
-  if (!title) {
+  if (title === undefined || title === null) {
     return undefined;
   }
   if (typeof title === 'string') {
@@ -94,6 +106,9 @@ export const resolveTitle = (title?: Metadata['title']): string | undefined => {
     if ('default' in title && typeof title.default === 'string') {
       return title.default;
     }
+    if ('template' in title && typeof title.template === 'string') {
+      return title.template;
+    }
   }
   return undefined;
 };
@@ -102,13 +117,16 @@ type OpenGraph = Metadata['openGraph'];
 
 export const mergeOpenGraph = (
   base: OpenGraph | undefined,
-  override: OpenGraph | undefined,
+  override: OpenGraph | null | undefined,
   fallbacks: {
     title?: string;
     description?: string;
     url?: string | URL;
   }
 ): OpenGraph | undefined => {
+  if (override === null) {
+    return undefined;
+  }
   const merged = deepMerge<NonNullable<OpenGraph>>(
     (base ?? {}) as NonNullable<OpenGraph>,
     (override ?? {}) as Partial<NonNullable<OpenGraph>>
@@ -117,13 +135,13 @@ export const mergeOpenGraph = (
     return undefined;
   }
   // Apply fallbacks - these are page-specific and should override defaults
-  if (fallbacks.title) {
+  if (fallbacks.title !== undefined) {
     merged.title = fallbacks.title;
   }
-  if (fallbacks.description) {
+  if (fallbacks.description !== undefined) {
     merged.description = fallbacks.description;
   }
-  if (fallbacks.url) {
+  if (fallbacks.url !== undefined) {
     merged.url = fallbacks.url;
   }
   return Object.keys(merged).length ? merged : undefined;
@@ -133,13 +151,16 @@ type Twitter = Metadata['twitter'];
 
 export const mergeTwitter = (
   base: Twitter | undefined,
-  override: Twitter | undefined,
+  override: Twitter | null | undefined,
   fallbacks: {
     title?: string;
     description?: string;
     images?: NonNullable<Twitter>['images'];
   }
 ): Twitter | undefined => {
+  if (override === null) {
+    return undefined;
+  }
   const merged = deepMerge<NonNullable<Twitter>>(
     (base ?? {}) as NonNullable<Twitter>,
     (override ?? {}) as Partial<NonNullable<Twitter>>
@@ -148,13 +169,13 @@ export const mergeTwitter = (
     return undefined;
   }
   // Apply fallbacks - these are page-specific and should override defaults
-  if (fallbacks.title) {
+  if (fallbacks.title !== undefined) {
     merged.title = fallbacks.title;
   }
-  if (fallbacks.description) {
+  if (fallbacks.description !== undefined) {
     merged.description = fallbacks.description;
   }
-  if (fallbacks.images) {
+  if (fallbacks.images !== undefined) {
     merged.images = fallbacks.images;
   }
   return Object.keys(merged).length ? merged : undefined;
