@@ -116,13 +116,14 @@ export const mergeOpenGraph = (
   if (!merged) {
     return undefined;
   }
-  if (fallbacks.title && merged.title == null) {
+  // Apply fallbacks - these are page-specific and should override defaults
+  if (fallbacks.title) {
     merged.title = fallbacks.title;
   }
-  if (fallbacks.description && merged.description == null) {
+  if (fallbacks.description) {
     merged.description = fallbacks.description;
   }
-  if (fallbacks.url && merged.url == null) {
+  if (fallbacks.url) {
     merged.url = fallbacks.url;
   }
   return Object.keys(merged).length ? merged : undefined;
@@ -146,13 +147,14 @@ export const mergeTwitter = (
   if (!merged) {
     return undefined;
   }
-  if (fallbacks.title && merged.title == null) {
+  // Apply fallbacks - these are page-specific and should override defaults
+  if (fallbacks.title) {
     merged.title = fallbacks.title;
   }
-  if (fallbacks.description && merged.description == null) {
+  if (fallbacks.description) {
     merged.description = fallbacks.description;
   }
-  if (fallbacks.images && merged.images == null) {
+  if (fallbacks.images) {
     merged.images = fallbacks.images;
   }
   return Object.keys(merged).length ? merged : undefined;

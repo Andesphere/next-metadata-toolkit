@@ -1,5 +1,5 @@
 {
-  "name": "@andesphere/next-seo",
+  "name": "next-metadata-toolkit",
   "version": "0.1.0",
   "description": "Thin wrapper around Next.js App Router Metadata API with typed JSON-LD helpers.",
   "license": "MIT",
