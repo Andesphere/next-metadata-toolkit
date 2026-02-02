@@ -1,13 +1,22 @@
 # next-metadata-toolkit
 
-Thin, type-safe helpers for the Next.js App Router Metadata API plus JSON-LD utilities.
+**Thin, type-safe helpers for the Next.js App Router Metadata API plus JSON-LD utilities.**
 
-- Wraps Next.js `Metadata` with sensible defaults
-- Preserves global Open Graph/Twitter defaults via deep merge
-- Typed JSON-LD helpers using `schema-dts` (types only)
-- Zero runtime dependencies
+[![npm version](https://img.shields.io/npm/v/next-metadata-toolkit.svg)](https://www.npmjs.com/package/next-metadata-toolkit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Install
+---
+
+## ✨ Features
+
+- 🎯 **Sensible defaults** — wraps Next.js `Metadata` so you write less boilerplate
+- 🔀 **Deep merge** — global Open Graph & Twitter settings cascade to every page
+- 🏷️ **Typed JSON-LD** — schema helpers powered by `schema-dts` (types only, no runtime bloat)
+- 📦 **Zero dependencies** — just your app and Next.js
+
+---
+
+## 📦 Installation
 
 ```bash
 npm install next-metadata-toolkit
@@ -17,9 +26,11 @@ pnpm add next-metadata-toolkit
 yarn add next-metadata-toolkit
 ```
 
-## Quick Start
+---
 
-### 1) Global config (root layout)
+## 🚀 Quick Start
+
+### 1. Global config (root layout)
 
 ```tsx
 // app/layout.tsx
@@ -45,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-### 2) Per-page metadata
+### 2. Per-page metadata
 
 ```tsx
 // app/blog/[slug]/page.tsx
@@ -67,17 +78,17 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 ```
 
-Tip: If you have the pathname but not a canonical URL, you can pass `pathname` instead:
+> 💡 **Tip:** Use `pathname` instead of `canonical` when you only have the path:
+>
+> ```ts
+> makePageMetadata({
+>   title: 'Pricing',
+>   description: 'Simple pricing for growing teams.',
+>   pathname: '/pricing',
+> });
+> ```
 
-```ts
-makePageMetadata({
-  title: 'Pricing',
-  description: 'Simple pricing for growing teams.',
-  pathname: '/pricing',
-});
-```
-
-### 3) JSON-LD
+### 3. JSON-LD structured data
 
 ```tsx
 // app/page.tsx
@@ -109,6 +120,9 @@ export default function HomePage() {
   );
 }
 ```
+
+<details>
+<summary><strong>Article + Breadcrumb example</strong></summary>
 
 ```tsx
 // app/blog/[slug]/page.tsx
@@ -144,63 +158,79 @@ export default function BlogPost({ post }: { post: Post }) {
 }
 ```
 
-## API
+</details>
+
+---
+
+## 📖 API Reference
 
 ### `createSeoConfig(input)`
 
 Builds global defaults for your root layout and stores them for page-level merging.
 
-```ts
-import type { SeoConfigInput } from 'next-metadata-toolkit';
-```
+| Option | Type | Description |
+|--------|------|-------------|
+| `siteName` | `string` | Site or brand name **(required)** |
+| `baseUrl` | `string` | Absolute site URL — sets `metadataBase` **(required)** |
+| `titleTemplate` | `string` | Title template (default: `%s \| ${siteName}`) |
+| `defaultTitle` | `string` | Fallback title (default: `siteName`) |
+| `defaultDescription` | `string` | Default meta description |
+| `defaultOgImage` | `string` | Default OG/Twitter image (relative or absolute) |
+| `twitterHandle` | `string` | `@handle` for Twitter cards |
+| `locale` | `string` | Open Graph locale (e.g. `en_US`) |
 
-Key options:
-
-- `siteName`: Site or brand name (required)
-- `titleTemplate`: Title template (default: `%s | ${siteName}`)
-- `defaultTitle`: Default title (default: `siteName`)
-- `defaultDescription`: Default meta description
-- `baseUrl`: Absolute site URL (required). Sets `metadataBase`
-- `defaultOgImage`: Default Open Graph/Twitter image (relative or absolute)
-- `twitterHandle`: `@handle` for Twitter metadata
-- `locale`: Open Graph locale (e.g. `en_US`)
+---
 
 ### `makePageMetadata(input)`
 
-Creates page-level metadata and deep-merges Open Graph/Twitter with the global defaults.
+Creates page-level metadata and deep-merges OG/Twitter with global defaults.
 
-Additional fields:
+| Option | Type | Description |
+|--------|------|-------------|
+| `title` | `string` | Page title |
+| `description` | `string` | Meta description |
+| `canonical` | `string` | Canonical URL or path |
+| `pathname` | `string` | Convenience for canonical from path |
+| `openGraph` | `object` | Open Graph overrides |
+| `twitter` | `object` | Twitter card overrides |
 
-- `canonical`: Canonical URL or path (relative ok when `metadataBase` is set)
-- `pathname`: Convenience for generating canonical URLs from a path
+---
 
-### `<JsonLd />`
+### `<JsonLd data={...} />`
 
-Server Component to render JSON-LD:
+Server Component that renders a `<script type="application/ld+json">` tag.
 
 ```tsx
 <JsonLd data={organizationSchema({ name: 'Example', url: 'https://example.com' })} />
 ```
 
-### Schema helpers
+---
 
-All helpers return `WithContext<T>` objects from `schema-dts`:
+### Schema Helpers
 
-- `organizationSchema()`
-- `websiteSchema()` (optional `SearchAction`)
-- `productSchema()` (includes `Offer`)
-- `articleSchema()`
-- `faqPageSchema()`
-- `breadcrumbSchema()`
+All helpers return `WithContext<T>` from `schema-dts`:
 
-## Notes
+| Helper | Schema Type |
+|--------|-------------|
+| `organizationSchema()` | Organization |
+| `websiteSchema()` | WebSite (with optional SearchAction) |
+| `productSchema()` | Product (includes Offer) |
+| `articleSchema()` | Article |
+| `faqPageSchema()` | FAQPage |
+| `breadcrumbSchema()` | BreadcrumbList |
 
-- `metadataBase` is required for correct absolute URL generation. Always pass `baseUrl` to `createSeoConfig`.
-- Open Graph images work best at `1200x630`.
-- Next.js merges metadata shallowly. This package deep-merges Open Graph and Twitter for you.
-- For dynamic pages, consider `React.cache()` to share data between `generateMetadata` and the page component.
-- FAQ pages typically perform best with ~10 questions or fewer.
+---
 
-## License
+## 📝 Notes
 
-MIT
+- **`metadataBase` is required** for correct absolute URL generation — always pass `baseUrl` to `createSeoConfig`
+- Open Graph images work best at **1200×630**
+- Next.js merges metadata shallowly; this package **deep-merges** OG and Twitter for you
+- For dynamic pages, consider `React.cache()` to share data between `generateMetadata` and the page component
+- FAQ pages typically perform best with **≤10 questions**
+
+---
+
+## 📄 License
+
+[MIT](LICENSE) © Andy Partner
