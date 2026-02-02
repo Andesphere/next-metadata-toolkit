@@ -1,4 +1,4 @@
-# @andesphere/next-seo
+# next-metadata-toolkit
 
 Thin, type-safe helpers for the Next.js App Router Metadata API plus JSON-LD utilities.
 
@@ -10,11 +10,11 @@ Thin, type-safe helpers for the Next.js App Router Metadata API plus JSON-LD uti
 ## Install
 
 ```bash
-npm install @andesphere/next-seo
+npm install next-metadata-toolkit
 # or
-pnpm add @andesphere/next-seo
+pnpm add next-metadata-toolkit
 # or
-yarn add @andesphere/next-seo
+yarn add next-metadata-toolkit
 ```
 
 ## Quick Start
@@ -23,7 +23,7 @@ yarn add @andesphere/next-seo
 
 ```tsx
 // app/layout.tsx
-import { createSeoConfig } from '@andesphere/next-seo';
+import { createSeoConfig } from 'next-metadata-toolkit';
 
 export const metadata = createSeoConfig({
   siteName: 'Andy Partner',
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ```tsx
 // app/blog/[slug]/page.tsx
-import { makePageMetadata } from '@andesphere/next-seo';
+import { makePageMetadata } from 'next-metadata-toolkit';
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const post = await getPost(params.slug);
@@ -81,7 +81,7 @@ makePageMetadata({
 
 ```tsx
 // app/page.tsx
-import { JsonLd, organizationSchema, websiteSchema } from '@andesphere/next-seo';
+import { JsonLd, organizationSchema, websiteSchema } from 'next-metadata-toolkit';
 
 export default function HomePage() {
   return (
@@ -112,7 +112,7 @@ export default function HomePage() {
 
 ```tsx
 // app/blog/[slug]/page.tsx
-import { JsonLd, articleSchema, breadcrumbSchema } from '@andesphere/next-seo';
+import { JsonLd, articleSchema, breadcrumbSchema } from 'next-metadata-toolkit';
 
 export default function BlogPost({ post }: { post: Post }) {
   return (
@@ -151,7 +151,7 @@ export default function BlogPost({ post }: { post: Post }) {
 Builds global defaults for your root layout and stores them for page-level merging.
 
 ```ts
-import type { SeoConfigInput } from '@andesphere/next-seo';
+import type { SeoConfigInput } from 'next-metadata-toolkit';
 ```
 
 Key options:
