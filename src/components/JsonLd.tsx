@@ -6,8 +6,12 @@ export interface JsonLdProps<T extends JsonLdData = JsonLdData> {
   id?: string;
 }
 
+// Escapes XSS-relevant characters in already-serialized JSON. Runs over the
+// whole JSON string, so structural quotes must NOT be escaped — escaping `"`
+// breaks JSON.parse on every emitted block. `<>&'` only occur inside string
+// values, where \uXXXX escapes remain valid JSON.
 const escapeJson = (value: string) =>
-  value.replace(/[<>&"']/g, (char) => {
+  value.replace(/[<>&']/g, (char) => {
     switch (char) {
       case '<':
         return '\\u003c';
@@ -15,8 +19,6 @@ const escapeJson = (value: string) =>
         return '\\u003e';
       case '&':
         return '\\u0026';
-      case '"':
-        return '\\u0022';
       case "'":
         return '\\u0027';
       default:
